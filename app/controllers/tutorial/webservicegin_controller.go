@@ -1,4 +1,4 @@
-package controllers
+package tutorial
 
 import (
 	"fmt"
@@ -32,6 +32,15 @@ func postAlbums(context *gin.Context) {
 	var newAlbum album
 	if err := context.BindJSON(&newAlbum); err != nil {
 		return
+	}
+	// check album if exist
+	for _, al := range albums {
+		if al.ID == newAlbum.ID {
+			context.IndentedJSON(http.StatusForbidden, gin.H{
+				"message": fmt.Sprintf("album: %s already exists", al.ID),
+			})
+			return
+		}
 	}
 	albums = append(albums, newAlbum)
 	context.IndentedJSON(http.StatusCreated, newAlbum)
